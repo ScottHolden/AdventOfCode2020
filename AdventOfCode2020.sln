@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30516.212
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode2020", "AdventOfCode2020\AdventOfCode2020.csproj", "{EC1A3BD8-BB20-4818-8866-106665A8EF00}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B649BE86-8597-44A6-AAF0-12B9B0BB8D9F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC1A3BD8-BB20-4818-8866-106665A8EF00}.Debug|x64.ActiveCfg = Debug|x64
+		{EC1A3BD8-BB20-4818-8866-106665A8EF00}.Debug|x64.Build.0 = Debug|x64
+		{EC1A3BD8-BB20-4818-8866-106665A8EF00}.Release|x64.ActiveCfg = Release|x64
+		{EC1A3BD8-BB20-4818-8866-106665A8EF00}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {055F09B1-1058-4716-8768-F599F393ECFC}
+	EndGlobalSection
+EndGlobal
