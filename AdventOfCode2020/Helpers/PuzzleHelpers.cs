@@ -16,6 +16,6 @@ namespace AdventOfCode2020
             => PuzzleDisplay.MeasureWithMessage(() => (IDay?)Activator.CreateInstance(t), t.Name + ".ctor");
 
         public static string ReadFile(string filename)
-            => PuzzleDisplay.MeasureWithMessage(() => File.ReadAllText(filename), " " + Path.GetFileNameWithoutExtension(filename));
+            => PuzzleDisplay.MeasureWithMessage(() => File.ReadAllText(filename).Replace("\r", ""), " " + Path.GetFileNameWithoutExtension(filename));
     }
 }

@@ -32,6 +32,7 @@ namespace AdventOfCode2020
             return current;
         }
     }
+
     public sealed class WeirdTinyFastDictionary : IDisposable
     {
         private readonly int _indexASize;
