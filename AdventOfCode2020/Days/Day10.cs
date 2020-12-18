@@ -12,7 +12,7 @@ namespace AdventOfCode2020
         public long Part1(string input)
         {
             long[] lines = input.ParseLinesAsLong();
-            var ordered = lines.Append(0).Append(lines.Max() + 3).OrderBy(x => x).ToArray();
+            long[] ordered = lines.Append(0).Append(lines.Max() + 3).OrderBy(x => x).ToArray();
             int[] count = new int[4];
             for (int i = 1; i < ordered.Length; i++)
             {

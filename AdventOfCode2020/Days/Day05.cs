@@ -30,7 +30,6 @@ namespace AdventOfCode2020
                     min += step;
                 }
             }
-
             return min;
         }
         public long Part2(string input)

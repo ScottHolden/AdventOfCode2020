@@ -13,9 +13,8 @@ namespace AdventOfCode2020
         private static (long Acc, bool Success) RunCode((Instruction Instruction, int Data)[] code)
         {
             bool[] visited = new bool[code.Length];
-            int pos = 0;
             long acc = 0;
-            while (pos < code.Length)
+            for (int pos = 0; pos < code.Length; pos++)
             {
                 if (visited[pos]) return (acc, false);
 
@@ -24,18 +23,12 @@ namespace AdventOfCode2020
                 if (code[pos].Instruction == Instruction.Acc)
                 {
                     acc += code[pos].Data;
-                    pos++;
                 }
                 else if (code[pos].Instruction == Instruction.Jmp)
                 {
-                    pos += code[pos].Data;
-                }
-                else
-                {
-                    pos++;
+                    pos += code[pos].Data - 1;
                 }
             }
-
             return (acc, true);
         }
 
@@ -44,27 +37,29 @@ namespace AdventOfCode2020
             (Instruction Instruction, int Data)[] code = ParseFile(input.SplitNonEmptyLines());
             for (int i = 0; i < code.Length; i++)
             {
-                if (code[i].Instruction == Instruction.Nop)
+                var originalInstruction = code[i].Instruction;
+
+                code[i].Instruction = code[i].Instruction switch
                 {
-                    code[i].Instruction = Instruction.Jmp;
-                    (long acc, bool success) = RunCode(code);
-                    if (success) return acc;
-                    code[i].Instruction = Instruction.Nop;
-                }
-                else if (code[i].Instruction == Instruction.Jmp)
-                {
-                    code[i].Instruction = Instruction.Nop;
-                    (long acc, bool success) = RunCode(code);
-                    if (success) return acc;
-                    code[i].Instruction = Instruction.Jmp;
-                }
+                    Instruction.Nop => Instruction.Jmp,
+                    Instruction.Jmp => Instruction.Nop,
+                    Instruction x => x
+                };
+
+                (long acc, bool success) = RunCode(code);
+
+                if (success) return acc;
+
+                code[i].Instruction = originalInstruction;
             }
 
             throw new Exception("No solution found!");
         }
 
         private static (Instruction Instruction, int Data)[] ParseFile(string[] data)
-            => data.Select(x => x.Split(' ')).Select(x => (Enum.Parse<Instruction>(x[0], true), int.Parse(x[1]))).ToArray();
+            => data.Select(x => x.Split(' '))
+                    .Select(x => (Enum.Parse<Instruction>(x[0], true), int.Parse(x[1])))
+                    .ToArray();
 
         private enum Instruction
         {

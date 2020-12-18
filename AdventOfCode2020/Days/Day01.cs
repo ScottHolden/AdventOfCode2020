@@ -1,41 +1,24 @@
-﻿namespace AdventOfCode2020
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace AdventOfCode2020
 {
     [PuzzleInput("Day01.txt", 997899, 131248694)]
     [PuzzleInput("Day01-Sample.txt", 514579, 241861950)]
     public class Day01 : IDay
     {
-        public long Part1(string input)
-        {
-            long[] lines = input.ParseLinesAsLong();
+        public long Part1(string input) => Part1(input.ParseLinesAsLong());
 
-            for (int i = 0; i < lines.Length; i++)
-            {
-                for (int j = i + 1; j < lines.Length; j++)
-                {
-                    if (lines[i] + lines[j] == 2020)
-                        return lines[i] * lines[j];
-                }
-            }
+        private static long Part1(long[] input)
+            => Solve(input.SelectMany(x => input.Select(y => new[] { x, y })));
 
-            return -1;
-        }
-        public long Part2(string input)
-        {
-            long[] lines = input.ParseLinesAsLong();
+        public long Part2(string input) => Part2(input.ParseLinesAsLong());
 
-            for (int i = 0; i < lines.Length; i++)
-            {
-                for (int j = i + 1; j < lines.Length; j++)
-                {
-                    for (int k = j + 1; k < lines.Length; k++)
-                    {
-                        if (lines[i] + lines[j] + lines[k] == 2020)
-                            return lines[i] * lines[j] * lines[k];
-                    }
-                }
-            }
+        private static long Part2(long[] input)
+            => Solve(input.SelectMany(x => input.SelectMany(y => input.Select(z => new[] { x, y, z }))));
 
-            return -1;
-        }
+        private static long Solve(IEnumerable<long[]> input)
+            => input.First(x => x.Sum() == 2020)
+                    .Aggregate(1L, (x, y) => x * y);
     }
 }

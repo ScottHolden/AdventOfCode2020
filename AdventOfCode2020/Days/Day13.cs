@@ -11,9 +11,11 @@ namespace AdventOfCode2020
         {
             string[] lines = input.SplitNonEmptyLines();
             long timestamp = long.Parse(lines[0]);
-            int[] buses = lines[1].Split(new char[] { ',', 'x' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
-            long current = timestamp;
-            while (true)
+            int[] buses = lines[1].Split(new char[] { ',', 'x' }, StringSplitOptions.RemoveEmptyEntries)
+                                    .Select(int.Parse)
+                                    .ToArray();
+
+            for (long current = timestamp; ; current++)
             {
                 for (int i = 0; i < buses.Length; i++)
                 {
@@ -22,15 +24,17 @@ namespace AdventOfCode2020
                         return (current - timestamp) * buses[i];
                     }
                 }
-                current++;
             }
         }
         public long Part2(string input)
         {
-            long[] buses = input.SplitNonEmptyLines()[1].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x[0] == 'x' ? -1 : long.Parse(x)).ToArray();
+            long[] buses = input.SplitNonEmptyLines()[1]
+                                .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                .Select(x => x[0] == 'x' ? -1 : long.Parse(x))
+                                .ToArray();
+
             long first = 0;
-            long diff = buses[0];
-            for (long i = 1; i < buses.Length; i++)
+            for (long i = 1, diff = buses[0]; i < buses.Length; i++)
             {
                 if (buses[i] > 0)
                 {
