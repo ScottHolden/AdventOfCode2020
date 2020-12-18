@@ -16,7 +16,7 @@ namespace AdventOfCode2020
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         private static long FindNumber(string input, int place)
         {
-            string[] items = input.Split(new char[] { ',', ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+            string[] items = input.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             int current = 0, i;
             using WeirdTinyFastDictionary wtfd = new(1000, 1000, 1000);

@@ -11,7 +11,7 @@ namespace AdventOfCode2020
         {
             (RangeSet[] checks, _, int[][] otherTickets) = ParseData(input);
 
-            return otherTickets.Select(x => ValidateTicket(x, checks)).Where(x => !x.Item1).Sum(x => x.Item2);
+            return otherTickets.Select(x => ValidateTicket(x, checks)).Where(x => x >= 0).Sum();
         }
 
         private static (RangeSet[] Checks, int[] MyTicket, int[][] OtherTickets) ParseData(string input)
@@ -24,33 +24,35 @@ namespace AdventOfCode2020
             );
         }
 
-        private static (bool, int) ValidateTicket(int[] ticket, RangeSet[] checks)
+        private static int ValidateTicket(int[] ticket, RangeSet[] checks)
+            => ticket.Append(-1)
+                        .Where(y => !checks.Any(x => x.IsWithin(y)))
+                        .First();
+
+        private static int[][] FilterInvalidTickets(int[][] tickets, RangeSet[] checks)
+            => tickets.Where(x => ValidateTicket(x, checks) < 0)
+                        .ToArray();
+
+        private static (RangeSet[] Checks, int[] MyTicket, int[][] OtherTickets) ParseAndValidateData(string input)
         {
-            for (int i = 0; i < ticket.Length; i++)
-            {
-                if (!checks.Any(x => x.IsWithin(ticket[i])))
-                {
-                    return (false, ticket[i]);
-                }
-            }
-            return (true, -1);
+            (RangeSet[] checks, int[] myTicket, int[][] otherTickets) = ParseData(input);
+            return (checks, myTicket, FilterInvalidTickets(otherTickets, checks));
         }
 
         public long Part2(string input)
         {
-            (RangeSet[] checks, int[] myTicket, int[][] otherTickets) = ParseData(input);
+            (RangeSet[] checks, int[] myTicket, int[][] otherTickets) = ParseAndValidateData(input);
 
-            otherTickets = otherTickets.Where(x => ValidateTicket(x, checks).Item1).ToArray();
-
-            RangeSet[][] colToCheck = BuildPossibleList(checks, otherTickets);
-
-            var res = TrimPossibilities(colToCheck);
-
-            return res.Select((x, i) => x.Name.StartsWith("departure") ? myTicket[i] : 1L).Aggregate((x, y) => x * y);
+            return TrimPossibilities(BuildPossibleList(checks, otherTickets))
+                        .Select((x, i) => x.Name.StartsWith("departure") ? myTicket[i] : 1L)
+                        .Aggregate((x, y) => x * y);
         }
 
         private static RangeSet[][] BuildPossibleList(RangeSet[] checks, int[][] otherTickets)
-            => Enumerable.Range(0, checks.Length).Select(i => checks.Where(x => ValidateColumnTicket(otherTickets, x, i)).ToArray()).ToArray();
+            => Enumerable.Range(0, checks.Length)
+                            .Select(i => checks.Where(x => ValidateColumnTicket(otherTickets, x, i))
+                                                .ToArray())
+                            .ToArray();
 
         private static bool ValidateColumnTicket(int[][] tickets, RangeSet check, int col)
             => tickets.All(x => check.IsWithin(x[col]));
@@ -85,6 +87,7 @@ namespace AdventOfCode2020
             }
             public bool IsWithin(int value) => value >= this.Min && value <= this.Max;
         }
+
         private record RangeSet(string Name, Range[] Items)
         {
             public static RangeSet Parse(string input)
