@@ -8,6 +8,9 @@ namespace AdventOfCode2020
         public static string[] SplitNonEmptyLines(this string input)
             => input.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
+        public static string[] SplitDoubleNewlineSections(this string input)
+            => input.Replace("\r", "").Split(new[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+
         public static long[] ParseLinesAsLong(this string input)
             => SplitNonEmptyLines(input).Select(long.Parse).ToArray();
 
