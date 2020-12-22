@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 
 const string DataPath = ".\\Data\\";
-const int RunCount = 100;
+const int RunCount = 1;
 bool pauseOnNext = false;
 Stopwatch wholeThing = Stopwatch.StartNew();
 
