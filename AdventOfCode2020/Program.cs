@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 
 const string DataPath = ".\\Data\\";
+const int RunCount = 100;
 bool pauseOnNext = false;
 Stopwatch wholeThing = Stopwatch.StartNew();
 
@@ -30,9 +31,11 @@ foreach (Type t in PuzzleHelpers.GetDayTypes())
                 PuzzleDisplay.WriteOutput("  Empty file found, skipping...");
                 continue;
             }
-
-            pauseOnNext |= !PuzzleDisplay.DisplayAnswer(day.Part1, input, puzzle.Part1Answer, puzzle.SkipPart1);
-            pauseOnNext |= !PuzzleDisplay.DisplayAnswer(day.Part2, input, puzzle.Part2Answer, puzzle.SkipPart2);
+            for (int i = 0; i < RunCount; i++)
+            {
+                pauseOnNext |= !PuzzleDisplay.DisplayAnswer(day.Part1, input, puzzle.Part1Answer, puzzle.SkipPart1);
+                pauseOnNext |= !PuzzleDisplay.DisplayAnswer(day.Part2, input, puzzle.Part2Answer, puzzle.SkipPart2);
+            }
         }
     }
     catch (Exception e)
