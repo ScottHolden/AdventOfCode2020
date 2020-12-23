@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode2020
@@ -7,72 +8,80 @@ namespace AdventOfCode2020
     [PuzzleInput("Day23-Sample.txt", 67384529, 149245887792)]
     public class Day23 : IDay
     {
+        private const int Part1Rounds = 100;
         public long Part1(string input)
-        {
-            List<int> cups = Solve(ParseCups(input), 100);
-            string[] p = string.Join("", cups).Split('1');
-            return long.Parse(p[1] + p[0]);
-        }
+            => FormatPart1Answer(Solve(ParseCups(input), Part1Rounds));
 
+        private static long FormatPart1Answer(List<int> cups)
+            => long.Parse(string.Join("", string.Join("", cups).Split('1').Reverse()));
+
+        private const int Part2Rounds = 10000000;
+        private const int Part2Cups = 1000000;
         public long Part2(string input)
         {
-            List<int> startingCups = ParseCups(input);
-            int maxCup = startingCups.Max();
-            startingCups.AddRange(Enumerable.Range(maxCup + 1, 1000000 - maxCup));
-
-            List<int> cups = Solve(startingCups, 10000000);
+            List<int> cups = Solve(IncrementalPadList(ParseCups(input), Part2Cups), Part2Rounds);
 
             int i = cups.IndexOf(1);
             return (long)cups[i + 1] * cups[i + 2];
         }
+
+        private static List<int> IncrementalPadList(List<int> list, int totalSize)
+            => list.Concat(Enumerable.Range(list.Max() + 1, totalSize - list.Count)).ToList();
 
         private static List<int> ParseCups(string input)
             => input.Trim().ToCharArray().Select(x => int.Parse(x.ToString())).ToList();
 
         private static List<int> Solve(List<int> startingCups, int itterations)
         {
-            LinkedList<int> cups = new(startingCups);
-            LinkedListNode<int>[] lookup = BuildLookup(cups);
-            var maxCup = cups.Max();
-            LinkedListNode<int> current = cups.First!;
+            (int Value, int Next)[] cups = new (int Value, int Next)[startingCups.Count];
+            int[] lookup = new int[startingCups.Count];
+
+            int maxCup = 0;
+            for (int i = 0; i < cups.Length; i++)
+            {
+                cups[i] = (startingCups[i], (i + 1) % cups.Length);
+                lookup[startingCups[i] - 1] = i;
+                if (startingCups[i] > maxCup) maxCup = startingCups[i];
+            }
+
+            int currentIndex = 0;
+
             for (int i = 0; i < itterations; i++)
             {
-                int currentValue = current.Value;
-                LinkedListNode<int> cupARef = current.Next ?? cups.First!;
-                LinkedListNode<int> cupBRef = cupARef.Next ?? cups.First!;
-                LinkedListNode<int> cupCRef = cupBRef.Next ?? cups.First!;
-                int cupA = cupARef.Value;
-                int cupB = cupBRef.Value;
-                int cupC = cupCRef.Value;
-                cups.Remove(cupARef);
-                cups.Remove(cupBRef);
-                cups.Remove(cupCRef);
+                int currentValue = cups[currentIndex].Value;
+
+                int nextAIndex = cups[currentIndex].Next;
+                int nextAValue = cups[nextAIndex].Value;
+
+                int nextBIndex = cups[nextAIndex].Next;
+                int nextBValue = cups[nextBIndex].Value;
+
+                int nextCIndex = cups[nextBIndex].Next;
+                int nextCValue = cups[nextCIndex].Value;
+
+                cups[currentIndex].Next = cups[nextCIndex].Next;
+
                 int dest = ModWrap(currentValue - 1, maxCup);
-                while (dest == cupA || dest == cupB || dest == cupC) dest = ModWrap(dest - 1, maxCup);
-                LinkedListNode<int> destCup = lookup[dest];
-                cups.AddAfter(destCup, cupCRef);
-                cups.AddAfter(destCup, cupBRef);
-                cups.AddAfter(destCup, cupARef);
-                current = lookup[currentValue].Next ?? cups.First!;
-            }
-            return cups.ToList();
-        }
+                while (dest == nextAValue || dest == nextBValue || dest == nextCValue) dest = ModWrap(dest - 1, maxCup);
 
-        private static LinkedListNode<int>[] BuildLookup(LinkedList<int> input)
-        {
-            LinkedListNode<int>[] lookup = new LinkedListNode<int>[input.Max() + 1];
-            LinkedListNode<int> lookupCurrent = input.First!;
-            for (int i = 0; i < input.Count; i++)
+                int destTail = cups[lookup[dest - 1]].Next;
+                cups[lookup[dest - 1]].Next = nextAIndex;
+                cups[nextCIndex].Next = destTail;
+                currentIndex = cups[lookup[currentValue - 1]].Next;
+            }
+
+            List<int> result = new();
+
+            for (int i = 0; i < cups.Length; i++)
             {
-                lookup[lookupCurrent.Value] = lookupCurrent;
-                lookupCurrent = lookupCurrent.Next ?? input.First!;
+                result.Add(cups[currentIndex].Value);
+                currentIndex = cups[currentIndex].Next;
             }
-            return lookup;
-        }
 
-        private static int ModWrap(int input, int mod)
-        {
-            return input <= 0 ? mod + input : input % mod;
+            return result;
+
+            static int ModWrap(int input, int mod)
+                => input <= 0 ? mod + input : input % mod;
         }
     }
 }
