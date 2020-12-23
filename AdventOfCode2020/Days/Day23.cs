@@ -70,7 +70,7 @@ namespace AdventOfCode2020
                 currentIndex = cups[lookup[currentValue - 1]].Next;
             }
 
-            List<int> result = new();
+            List<int> result = new(cups.Length);
 
             for (int i = 0; i < cups.Length; i++)
             {
